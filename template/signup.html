@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+{% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock style %}
+
+{% block body %}
+
+<form class="forms">
+    <h1>Signup</h1>
+    <label for="phone">Phone number</label>
+    <input type="text" name="phone" id="phone" required />
+
+    <label for="Name" id="changableName">Name</label>
+    <input type="text" name="name" id="name" required />
+
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required />
+
+    <label for="cpassword">Confirm password</label>
+    <input type="password" name="password" id="cpassword" required>
+    <div class="row">
+        <div class="col col-md-8 col-xs-8 px-5">
+            <select id="userSelect" class="form-select">
+                <option selected disabled>Select User Type</option>
+                <option value="normal">General User</option>
+                <option value="staff">Service Provider</option>
+            </select>
+        </div>
+    </div>
+    <br>
+    <div id="forservice">      
+    </div>
+    
+    
+    <p style="margin: 20px;">
+    <input type="checkbox" id="terms" name="terms" value="agree" />
+    I agree to the terms and conditions</label><br>
+    </p>
+    {% csrf_token %}
+    <button id="registerBtn">Sign Up</button> 
+      
+  </form>
+
+  <script>
+    const select = document.querySelector("#userSelect")
+    console.log("the user",select)
+    select.addEventListener("change",function(){
+        if (select.value == "staff"){
+            document.querySelector("#changableName").innerHTML = "Organization Name"
+            document.querySelector("#forservice").innerHTML = `
+
+        <div class="row">
+            <div class="col col-md-8 col-xs-8 px-5">
+                <select id="selectOrgType" class="form-select">
+                    <option selected disabled>Select Organization Type</option>
+                    <option value="ems">EMS</option>
+                    <option value="police">Police Department</option>
+                </select>
+            </div>
+        </div>
+        `
+
+        }else{
+            document.querySelector("#changableName").innerHTML = "Name"
+
+            document.querySelector("#forservice").innerHTML = ""
+        }
+        
+        
+    })
+    const rbtn = document.querySelector("#registerBtn")
+    rbtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        // alert("button clicked");
+        const phone = document.querySelector("#phone").value;
+        const name = document.querySelector("#name").value;
+        const passwd = document.querySelector("#password").value;
+        const cpasswd = document.querySelector("#cpassword").value;
+        const userType = document.querySelector("#userSelect").value;
+        
+        
+        if(passwd != cpasswd){
+            alert("password and confirm password are not same")
+            return
+        }
+        let payload = { phone,name,passwd,userType }
+        const headers = {
+            "Content-Type":"application/json",
+            "Authorization":localStorage.getItem("token")
+        }
+        if (userType == "normal"){
+            fetch("http://localhost:8000/register/",{
+                method:"POST",
+                body:JSON.stringify(payload),
+                headers:headers
+            }).then(response=>response.json())
+            .then(data=>{
+                if (data.message == "success"){
+                    window.location.href = "/home"
+                }else{
+                    alert(data.message)
+                }
+            })
+            .catch(err=>console.log(err))
+        }
+        else{
+            // for organization
+            const orgType = document.querySelector("#selectOrgType").value;
+            payload = { phone,name,passwd,userType ,orgName,orgType}
+
+        }
+        console.log(phone, name, passwd, cpasswd);
+        // alert("clicked");
+    });
+  </script>
+
+  {% endblock body %}

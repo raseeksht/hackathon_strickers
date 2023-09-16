@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import User
-from .models import Service,ServiceType
+from .models import User,Report
 
 
 admin.site.register(User)
-admin.site.register(Service)
-admin.site.register(ServiceType)
+admin.site.register(Report)
+

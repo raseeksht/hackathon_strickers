@@ -16,17 +16,18 @@ class User(models.Model):
     def __str__(self):
         return f"{self.phone} - {self.name}"
 
-class ServiceType(models.Model):
-    stype = models.CharField(max_length=100)
-    def __str__(self):
-        return self.stype
-
-class Service(models.Model):
-    name = models.CharField(max_length=100)
-    serviceType = models.ForeignKey(ServiceType,on_delete=models.CASCADE)
-    serviceDesc = models.TextField(max_length=500)
+class Report(models.Model):
+    reportType = models.CharField(max_length=50)
+    Desc = models.CharField(max_length=200)
+    Type = models.CharField(max_length=200)
+    latitude = models.CharField(max_length=20)
+    longitude = models.CharField(max_length=20)
+    reportedBy = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.Type + " - " + self.Desc
+    
+
+
 
 

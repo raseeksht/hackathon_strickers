@@ -8,10 +8,38 @@
 </div>
 
 <script>
-
+    if (localStorage.getItem("token")){
+        fetch('http://localhost:8000/checktoken',{
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization":localStorage.getItem("token")
+                }})
+            .then(response => {
+                // Check if the response status code indicates success (e.g., 200 OK)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+              // notify use that case has been reported
+                // alert(data.message);
+                if (data.message == "invalid_token"){
+                    window.location.href = "/"
+                }
+            })
+            .catch(error => {
+                // logs err message if any
+                console.log('Fetch error:', error);
+            });
+    }else{
+        window.location.href = "/"
+    }
     const jwt = document.querySelector("#jwt").innerHTML
-    console.log(jwt)
-    localStorage.setItem("token",jwt)
+    // console.log(jwt)
+    if (jwt != ""){
+        localStorage.setItem("token",jwt)
+    }
 
 
 

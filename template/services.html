@@ -26,7 +26,7 @@
                 {% csrf_token %}
 
                 
-                <textarea style="width: 100%;height: 200px;" placeholder="medical description" id="medicalEmergencyDesc"></textarea>
+                <textarea style="width: 100%;height: 200px;" placeholder="Medical description(optional)" id="medicalEmergencyDesc"></textarea>
                 <button class="btn btn-outline-primary" id="medicalReportButton">Report</button>
               </form>
             </div>
@@ -40,7 +40,22 @@
           </h2>
           <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-              <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              <form class="medical-form">
+                <div class="row">
+                    <div class="col col-md-4 col-xs-12">
+                        <!-- <select class="form-select my-2" id="crimeEmergencyType">
+                            <option value="" disabled selected>Select Case</option>
+                            <option value="minor">Minor Case</option>
+                            <option value="major">Major Case</option>
+                        </select> -->
+                    </div>
+                </div>
+                {% csrf_token %}
+
+                
+                <textarea required style="width: 100%;height: 200px;" placeholder="Crime description" id="crimeEmergencyDesc"></textarea>
+                <button class="btn btn-outline-primary" id="crimeReportButton">Report</button>
+              </form>
             </div>
           </div>
         </div>
@@ -63,15 +78,45 @@
           }
         
         var medicalBtn = document.querySelector("#medicalReportButton")
+        var crimeBtn = document.querySelector("#crimeReportButton")
         medicalBtn.addEventListener("click", function(e) {
             e.preventDefault()
             medType = document.querySelector("#medicalEmergencyType").value
             medDesc = document.querySelector("#medicalEmergencyDesc").value
 
+            // execute when the button is clicked
+            fetch('http://localhost:8000/report/',{
+                method: 'POST',
+                body:JSON.stringify({reportType:"medical", medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
+                headers: {
+                    'Content-Type': 'application/json',
+                }})
+            .then(response => {
+                // Check if the response status code indicates success (e.g., 200 OK)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+              // notify use that case has been reported
+                alert(data.message);
+            })
+            .catch(error => {
+                // logs err message if any
+                console.error('Fetch error:', error);
+            });
+        });
+
+        crimeBtn.addEventListener("click", function(e) {
+            e.preventDefault()
+            medType = ""
+            medDesc = document.querySelector("#crimeEmergencyDesc").value
+
             // Your code to execute when the button is clicked
             fetch('http://localhost:8000/report/',{
                 method: 'POST',
-                body:JSON.stringify({ medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
+                body:JSON.stringify({reportType:"crime", medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
                 headers: {
                     'Content-Type': 'application/json',
                 }})

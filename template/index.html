@@ -20,7 +20,7 @@
         {% endif %}
         
         <button style="margin-bottom: 0.5rem;">Login</button>
-        <button style=" margin: 1.5rem;">Sign Up</button>
+        <button style=" margin: 1.5rem;"><a href="/signup" style="text-decoration: none;color: #fff;">Sign Up</a></button>
 
 
         
@@ -30,7 +30,7 @@
     
 <script>
   const token = localStorage.getItem("token")
-  if (token){
+  if (!token){
     window.location.href = "/home"
   }
 </script>
