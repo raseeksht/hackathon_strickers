@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from .models import User
-from django.contrib.auth import authenticate,logout,login
+from .models import User,Service
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 
 # Create your views here.
 
@@ -17,7 +19,7 @@ def home(request):
         phone = request.POST.get('phone')
         password = request.POST.get('password')
         res = User.objects.filter(phone=phone,password=password)
-        # user = authenticate(request, phone=phone, password=password)
+        # user = authenticate(request, username=username, password=password)
         # print(user)
 
         print(res)
@@ -28,13 +30,19 @@ def home(request):
             context = {"message":"credential invalid"}
             return render(request,"index.html",context)
     else:
-        return HttpResponse("ok")
+        return render(request,"home.html")
 
 
 
 def services(request):
-    return render(request,"services.html")
+    service = Service.objects.all()
+    context = {"service":service}
+    return render(request,"services.html",context)
 
-def logout(request):
-    logout(request)
-    return redirect
+@csrf_exempt
+def report(request):
+    if request.method == "POST":
+        # print(request.body)
+        jsondata = json.loads(request.body)
+        return HttpResponse("reporting done")
+
