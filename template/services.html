@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col col-md-4 col-xs-12">
                         <select class="form-select my-2" id="medicalEmergencyType">
-                            <option value="" disabled selected>Select Any</option>
+                            <option value="" disabled selected>Select Case</option>
                             <option value="minor">Minor Case</option>
                             <option value="major">Major Case</option>
                         </select>
@@ -47,6 +47,21 @@
       </div>
 
       <script>
+        var latitude,longitude;
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              latitude = position.coords.latitude;
+              longitude = position.coords.longitude;
+              
+              // return {"latitude":latitude,"longitude":longitude}
+            }, function(error) {
+              // Handle any errors that occur during the geolocation request
+              console.error("Error getting location: " + error.message);
+            });
+          } else {
+            console.log("Geolocation is not available in this browser.");
+          }
+        
         var medicalBtn = document.querySelector("#medicalReportButton")
         medicalBtn.addEventListener("click", function(e) {
             e.preventDefault()
@@ -56,7 +71,7 @@
             // Your code to execute when the button is clicked
             fetch('http://localhost:8000/report/',{
                 method: 'POST',
-                body:JSON.stringify({ medType: medType,medDesc:medDesc }),
+                body:JSON.stringify({ medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
                 headers: {
                     'Content-Type': 'application/json',
                 }})
@@ -65,38 +80,18 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                // Parse the response body as JSON
                 return response.json();
             })
             .then(data => {
-                // Do something with the JSON data
+              // notify use that case has been reported
                 alert(data.message);
             })
             .catch(error => {
-                // Handle any errors that occurred during the fetch
+                // logs err message if any
                 console.error('Fetch error:', error);
             });
         });
-//        if ("geolocation" in navigator) {
-//   navigator.geolocation.getCurrentPosition(function(position) {
-//     const latitude = position.coords.latitude;
-//     const longitude = position.coords.longitude;
-//     const googleMapsURL = `https://www.google.com/maps/@${latitude},${longitude},15z?entry=ttu`;
-    
-//     // Create a link element
-//     const link = document.createElement('a');
-//     link.href = googleMapsURL;
-//     link.textContent = 'Open in Google Maps';
-    
-//     // Append the link to the HTML document
-//     document.body.appendChild(link);
-//   }, function(error) {
-//     // Handle any errors that occur during the geolocation request
-//     console.error("Error getting location: " + error.message);
-//   });
-// } else {
-//   console.log("Geolocation is not available in this browser.");
-// }
+       
 
       </script>
 

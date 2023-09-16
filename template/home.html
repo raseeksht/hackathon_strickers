@@ -3,4 +3,19 @@
 {% block body %}
 <h1>at home</h1>
 
+<div id="jwt">
+    {{jwt}}
+</div>
+
+<script>
+
+    const jwt = document.querySelector("#jwt").innerHTML
+    console.log(jwt)
+    localStorage.setItem("token",jwt)
+
+
+
+
+</script>
+
 {% endblock body %}

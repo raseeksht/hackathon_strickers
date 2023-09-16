@@ -1,9 +1,12 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from .models import User,Service
 from django.views.decorators.csrf import csrf_exempt
 import json
+import jwt
 
+
+JWT_SECTET = "secret"
 
 # Create your views here.
 
@@ -24,7 +27,11 @@ def home(request):
 
         print(res)
         if len(res) == 1:
-            return render(request,"home.html")
+            jwt_encoded = jwt.encode({"phone": phone}, JWT_SECTET, algorithm="HS256")
+
+            response = render(request,"home.html",context={"jwt":jwt_encoded})
+            response['Authorization'] = jwt_encoded
+            return response
         else:
             # print("here")
             context = {"message":"credential invalid"}
@@ -44,5 +51,6 @@ def report(request):
     if request.method == "POST":
         # print(request.body)
         jsondata = json.loads(request.body)
-        return HttpResponse("reporting done")
+        print(jsondata)
+        return JsonResponse({"message":"Case Reported"})
 
