@@ -11,5 +11,7 @@ urlpatterns = [
 	path('signup/',views.signup,name="signuppage"),
 	path('register/',views.register,name="registerpage"),
 	path('pendingcases/',views.pendingcase,name="pendingcasepage"),
-	path('fetchpendingcase/',views.pendingcase,name="pendingcasepage"),
+	path('fetchpendingcase/',views.fetchpendingcase,name="fetchpendingcasepage"),
+	path('acknowledge/',views.acknowledge,name="acknowledgementcase"),
+	path('resolve/',views.resolve,name="resolveack"),
 ]

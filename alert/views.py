@@ -6,6 +6,7 @@ import json
 import jwt
 from django.db.models import Q
 from django.core import serializers
+from django.shortcuts import get_object_or_404
 
 
 JWT_SECTET = "secret"
@@ -33,7 +34,8 @@ def login(request):
 
             response = {"token":jwt_encoded,"name":res[0].name,"phone":jsonbody['phone'],"userType":res[0].type}
             return JsonResponse({"message":"login_success","data":response})
-
+        else:
+            return JsonResponse({"message":"invalid credential"})
             
         #     return response
         # else:
@@ -116,12 +118,41 @@ def pendingcase(request):
 def fetchpendingcase(request):
     if request.method =="POST":
         jsondata = json.loads(request.body)
+        print(jsondata)
         if jsondata['userType'] == "police":
             reports = Report.objects.exclude(status="resolved")
         else:
             reports = Report.objects.filter(
-            ~Q(status="resolved") & Q(orgType="ems")
+            ~Q(status="resolved") & Q(reportType="medical")
             )
         data = serializers.serialize("json", reports)
+        print(data)
         return JsonResponse({"message":"ok","data":data})
-        
+
+
+def acknowledge(request):
+    ack = request.GET.get('ack', None)
+    name = request.GET.get('name', None)
+    # set acknowledge by the organication
+    if ack is not None:
+        report = get_object_or_404(Report, pk=ack)
+
+        report.status = f"Acknowledged by {name}"
+        report.save()
+
+        return JsonResponse({"message": "acknowledge_okay"})
+    else:
+        return JsonResponse({"message": "acknowledge_failed"})
+
+def resolve(request):
+    ack = request.GET.get('ack', None)
+    # set acknowledge by the organication
+    if ack is not None:
+        report = get_object_or_404(Report, pk=ack)
+
+        report.status = f"resolved"
+        report.save()
+
+        return JsonResponse({"message": "resolve_okay"})
+    else:
+        return JsonResponse({"message": "resolve_failed"})

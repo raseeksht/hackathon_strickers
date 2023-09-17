@@ -23,6 +23,7 @@ class Report(models.Model):
     latitude = models.CharField(max_length=20)
     longitude = models.CharField(max_length=20)
     reportedBy = models.CharField(max_length=50)
+    status = models.CharField(max_length=100,default="")
 
     def __str__(self):
         return self.Type + " - " + self.Desc
@@ -35,7 +36,7 @@ class OrgUser(models.Model):
     orgType = models.CharField(max_length=200)
 
     def __str__(self) :
-        return self.name
+        return self.name + " "+self.phone
 
     
 
