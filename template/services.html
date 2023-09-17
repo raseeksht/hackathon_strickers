@@ -2,7 +2,7 @@
 
 
 {% block body %}
-<h1>our services</h1>
+<h1 class="heading text-center">our services</h1>
 <div class="container">
     <div class="accordion" id="accordionExample">
         <div class="accordion-item">
@@ -62,6 +62,36 @@
       </div>
 
       <script>
+        if (localStorage.getItem("token")){
+        fetch('http://localhost:8000/checktoken',{
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization":localStorage.getItem("token")
+                }})
+            .then(response => {
+                // Check if the response status code indicates success (e.g., 200 OK)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+              // notify use that case has been reported
+                // alert(data.message);
+                if (data.message == "invalid_token"){
+                    localStorage.removeItem("token")
+                    window.location.href = "/"
+                }
+            })
+            .catch(error => {
+                // logs err message if any
+                console.log('Fetch error:', error);
+            });
+    }else{
+        localStorage.removeItem("token")
+        window.location.href = "/"
+    }
+
         var latitude,longitude;
           if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -83,11 +113,17 @@
             e.preventDefault()
             medType = document.querySelector("#medicalEmergencyType").value
             medDesc = document.querySelector("#medicalEmergencyDesc").value
-
+            // alert(localStorage.getItem('phone'))
             // execute when the button is clicked
             fetch('http://localhost:8000/report/',{
                 method: 'POST',
-                body:JSON.stringify({reportType:"medical", medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
+                body:JSON.stringify({
+                  reportType:"medical",
+                  medType: medType,
+                  medDesc:medDesc,
+                  location:{latitude,longitude},
+                  reportedBy:localStorage.getItem('phone')
+                }),
                 headers: {
                     'Content-Type': 'application/json',
                 }})
@@ -116,9 +152,10 @@
             // Your code to execute when the button is clicked
             fetch('http://localhost:8000/report/',{
                 method: 'POST',
-                body:JSON.stringify({reportType:"crime", medType: medType,medDesc:medDesc,location:{latitude,longitude} }),
+                body:JSON.stringify({reportType:"crime", medType: medType,medDesc:medDesc,location:{latitude,longitude} ,reportedBy:localStorage.getItem('phone')}),
                 headers: {
                     'Content-Type': 'application/json',
+                    "Autorization": localStorage.getItem("token")
                 }})
             .then(response => {
                 // Check if the response status code indicates success (e.g., 200 OK)

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1 class="text-center underline">Pending Cases</h1>
+<div class="container" style="min-height: 70vh;">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>sn</td>
+                <td>reportType</td>
+                <td>Description</td>
+                <td>reportedBy</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- {%for case in nonresolved %}
+         
+            <tr>
+                <td><span><i class="fa-solid fa-check"></i>{{forloop.counter}}</span></td>
+                <td>{{case.reportType}}</td>
+                <td><a target="_blank" href="tel:9867894343"> {{case.reportedBy}} </a></td>
+                <td>{{case.status}}</td>
+            </tr>
+            {% endfor %} -->
+        </tbody>
+    </table>
+    
+</div>
+
+<!-- {% block footer%} -->
+{% include  './footer.html' %}
+
+
+
+<!-- {% endblock %} -->
+
+<script>
+
+// fetch data from /fetchpendingcase endpoint and process data and 
+async function fetchDataAndProcess() {
+  try {
+    const response = await fetch('http://localhost:8000/fetchpendingcase/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"userType": localStorage.getItem('userType')}),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    const requiredData = JSON.parse(data.data);
+
+    const tbody = document.querySelector("tbody");
+
+    for (const key in requiredData) {
+      if (requiredData.hasOwnProperty(key)) {
+        const value = requiredData[key];
+        const statusClass = value.fields.status.startsWith('Acknowledged') ? 'fa-xmark' : '';
+        tbody.insertAdjacentHTML("beforeend", `<tr>
+          <td><span onclick="sendAcknowledgement(${value.pk})"><i class="fa-solid fa-check"></i></span>${Number(key) + 1}</td>
+          <td>${value.fields.reportType}</td>
+          <td>${value.fields.Desc}</td>
+          <td><a target="_blank" href="tel:9867894343">${value.fields.reportedBy}</a></td>
+          <td><span onclick="resolvecase(${value.pk})">${value.fields.status} <i class="fa-solid ${statusClass}"></i></span></td>
+        </tr>`);
+      }
+    }
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+}
+
+fetchDataAndProcess();
+
+function sendAcknowledgement(pk){
+    const name = localStorage.getItem("name")
+    fetch(`http://localhost:8000/acknowledge/?ack=${pk}&name=${name}`,{
+    }).then(response=>response.json())
+    .then(data=>{
+        if (data.message == "acknowledge_okay"){
+           
+            // window.location.href = "/home"
+            location.reload()
+        }else{
+            alert(data.message)
+        }
+    })
+    .catch(err=>console.log(err))
+}
+
+function resolvecase(pk){
+    fetch(`http://localhost:8000/resolve/?ack=${pk}`,{
+    }).then(response=>response.json())
+    .then(data=>{
+        if (data.message == "resolve_okay"){
+           
+            // window.location.href = "/home"
+            location.reload()
+        }else{
+            alert(data.message)
+        }
+    })
+    .catch(err=>console.log(err))
+}
+</script>
+
+{% endblock body %}

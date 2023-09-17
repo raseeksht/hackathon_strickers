@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
-from .models import User,Report
+from .models import User,Report,OrgUser
 from django.views.decorators.csrf import csrf_exempt
 import json
 import jwt
@@ -10,34 +10,40 @@ JWT_SECTET = "secret"
 
 # Create your views here.
 
+@csrf_exempt
 def login(request):
+     if request.method == 'POST':
+        
+        jsonbody = json.loads(request.body)
+        print(jsonbody)
+        # return HttpResponse("ok")
+
+        if jsonbody['userType'] == "normal":
+            res = User.objects.filter(phone=jsonbody['phone'],password=jsonbody['passwd'])
+        else:
+            res = OrgUser.objects.filter(phone=jsonbody['phone'],password=jsonbody['passwd'])
+        
+        
+        if len(res) == 1:
+            jwt_encoded = jwt.encode({"phone": jsonbody['phone']}, JWT_SECTET, algorithm="HS256")
+            print(jwt_encoded)
+        # return HttpResponse("ok")
+
+            response = {"token":jwt_encoded,"name":res[0].name,"phone":jsonbody['phone'],"userType":res[0].type}
+            return JsonResponse({"message":"login_success","data":response})
+
+            
+        #     return response
+        # else:
+        #     # print("here")
+        #     return JsonResponse({"message":"invalid login"})
+
+
+def index(request):
     return render(request,"index.html")
 
-def authenticate():
-    pass
-     
-
 def home(request):
-    if request.method == 'POST':
-        phone = request.POST.get('phone')
-        password = request.POST.get('password')
-        res = User.objects.filter(phone=phone,password=password)
-        # user = authenticate(request, username=username, password=password)
-        # print(user)
-
-        print(res)
-        if len(res) == 1:
-            jwt_encoded = jwt.encode({"phone": phone}, JWT_SECTET, algorithm="HS256")
-
-            response = render(request,"home.html",context={"jwt":jwt_encoded})
-            response['Authorization'] = jwt_encoded
-            return response
-        else:
-            # print("here")
-            context = {"message":"credential invalid"}
-            return render(request,"index.html",context)
-    else:
-        return render(request,"home.html")
+    return render(request,"home.html")
 
 
 
@@ -49,7 +55,7 @@ def report(request):
     if request.method == "POST":
         jsondata = json.loads(request.body)
         print(jsondata)
-        newrecord = Report(reportType=jsondata['reportType'],Desc=jsondata['medDesc'],Type=jsondata['medType'],latitude=jsondata['location']['latitude'],longitude=jsondata['location']['longitude'])
+        newrecord = Report(reportType=jsondata['reportType'],Desc=jsondata['medDesc'],Type=jsondata['medType'],latitude=jsondata['location']['latitude'],longitude=jsondata['location']['longitude'],reportedBy=jsondata['reportedBy'])
         newrecord.save()
         
     
@@ -80,11 +86,30 @@ def register(request):
     if request.method == "POST":
         jsondata = json.loads(request.body)
         print(jsondata)
-        newuser = User(phone=jsondata['phone'],
+        if jsondata['userType'] == "normal":
+            newuser = User(phone=jsondata['phone'],
                        name=jsondata['name'],
                        password=jsondata['passwd'],
                        type=jsondata['userType'])
+        else:
+            newuser =OrgUser(phone=jsondata['phone'],
+                       name=jsondata['name'],
+                       password=jsondata['passwd'],
+                       type=jsondata['userType'],
+                       orgType=jsondata['orgType']
+                       )
         newuser.save()
-        return JsonResponse({"message":"register is here baby"})
+        jwt_encoded = jwt.encode({"phone": jsondata['phone']}, JWT_SECTET, algorithm="HS256")
+
+        payload = {"token":jwt_encoded,"name":jsondata['name'],"phone":jsondata['phone'],"userType":jsondata['userType']}
+        return JsonResponse({"message":"register_success","data":payload})
     else:
         return HttpResponse("Method not allowed")
+
+
+def pendingcase(request):
+    return render(request,"pendingcases.html")
+
+@csrf_exempt
+def fetchpendingcase(request):
+    pass

@@ -1,15 +1,29 @@
 {% extends 'base.html' %}
 
 
+{% block title %} Sign Up - Alert Management System {% endblock title%}
+
 {% block style %}
 {% load static %}
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock style %}
 
 {% block body %}
+<!-- <img src="{% static 'images/logo.png' %}" alt=""> -->
 
+<h1 class="text-center heading">fdsafdsgfds Management System</h1>
 <form class="forms">
     <h1>Signup</h1>
+    <div class="row">
+        <div class="col col-md-8 col-xs-8" style="padding-left: 40px;">
+            <select id="userSelect" class="form-select">
+                <option selected disabled>Select User Type</option>
+                <option value="normal">General User</option>
+                <option value="staff">Service Provider</option>
+            </select>
+        </div>
+    </div>
+    <br>
     <label for="phone">Phone number</label>
     <input type="text" name="phone" id="phone" required />
 
@@ -21,22 +35,14 @@
 
     <label for="cpassword">Confirm password</label>
     <input type="password" name="password" id="cpassword" required>
-    <div class="row">
-        <div class="col col-md-8 col-xs-8 px-5">
-            <select id="userSelect" class="form-select">
-                <option selected disabled>Select User Type</option>
-                <option value="normal">General User</option>
-                <option value="staff">Service Provider</option>
-            </select>
-        </div>
-    </div>
+    
     <br>
     <div id="forservice">      
     </div>
     
     
     <p style="margin: 20px;">
-    <input type="checkbox" id="terms" name="terms" value="agree" />
+    <input type="checkbox" id="terms" name="terms" value="agree" required/>
     I agree to the terms and conditions</label><br>
     </p>
     {% csrf_token %}
@@ -91,30 +97,41 @@
             "Content-Type":"application/json",
             "Authorization":localStorage.getItem("token")
         }
-        if (userType == "normal"){
-            fetch("http://localhost:8000/register/",{
-                method:"POST",
-                body:JSON.stringify(payload),
-                headers:headers
-            }).then(response=>response.json())
-            .then(data=>{
-                if (data.message == "success"){
-                    window.location.href = "/home"
-                }else{
-                    alert(data.message)
-                }
-            })
-            .catch(err=>console.log(err))
-        }
-        else{
-            // for organization
+        if (userType == "staff"){
             const orgType = document.querySelector("#selectOrgType").value;
-            payload = { phone,name,passwd,userType ,orgName,orgType}
-
+            payload = { phone,name,passwd,userType,orgType}
         }
+        // for organization and user both
+        fetch("http://localhost:8000/register/",{
+            method:"POST",
+            body:JSON.stringify(payload),
+            headers:headers
+        }).then(response=>response.json())
+        .then(data=>{
+            console.log(data)
+            if (data.message == "register_success"){
+                localStorage.setItem("token",data.data.token)
+                localStorage.setItem("name",data.data.name)
+                localStorage.setItem("phone",data.data.phone)
+                localStorage.setItem("userType",data.data.userType)
+                window.location.href = "/home"
+            }else{
+                alert(data.message)
+            }
+        })
+        .catch(err=>console.log(err))
+        
+
+        
         console.log(phone, name, passwd, cpasswd);
         // alert("clicked");
     });
+
+    const logoutbtn = document.querySelector("#logoutHiddenToggle")
+    logoutbtn.classList.add("visually-hidden")
+    const navz = document.querySelector("#navbar")
+    navz.style.display = "none"
+
   </script>
 
   {% endblock body %}

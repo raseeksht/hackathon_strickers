@@ -27,6 +27,17 @@ class Report(models.Model):
     def __str__(self):
         return self.Type + " - " + self.Desc
     
+class OrgUser(models.Model):
+    phone = models.CharField(max_length=50,blank=False,default="")
+    name = models.CharField(max_length=50,blank=False,default="")
+    password = models.CharField(max_length=100,blank=False,default="")
+    type = models.CharField(max_length=200,default="")
+    orgType = models.CharField(max_length=200)
+
+    def __str__(self) :
+        return self.name
+
+    
 
 
 

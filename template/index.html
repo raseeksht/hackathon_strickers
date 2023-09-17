@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
+
+{% block title %} Login - Alert Management System {% endblock title%}
+
 {% block style %}
 {% load static %}
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock style %}
 
 {% block body %}
-
+    <h1 class="text-center my-5 heading">Emergency Management System</h1>
     <div class="container">
       <form class="forms" action="/home/" method="post">
         <h1>Login</h1>
@@ -14,12 +17,22 @@
         <input type="text" name="phone" id="phone" required />
         <label for="password">Password</label>
         <input type="password" name="password" id="password" required />
+        <div class="row">
+            <div class="col col-md-8 col-xs-8 px-5">
+                <select id="userSelect" class="form-select">
+                    <option selected disabled>Select User Type</option>
+                    <option value="normal">General User</option>
+                    <option value="staff">Service Provider</option>
+                </select>
+            </div>
+        </div>
+
         {% csrf_token %}
         {% if message %}
         <p class="text-center">{{message}}</p>
         {% endif %}
         
-        <button style="margin-bottom: 0.5rem;">Login</button>
+        <button style="margin-bottom: 0.5rem;" id="loginBtn">Login</button>
         <button style=" margin: 1.5rem;"><a href="/signup" style="text-decoration: none;color: #fff;">Sign Up</a></button>
 
 
@@ -29,10 +42,73 @@
 
     
 <script>
-  const token = localStorage.getItem("token")
-  if (!token){
-    window.location.href = "/home"
-  }
+  if (localStorage.getItem("token")){
+        fetch('http://localhost:8000/checktoken',{
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization":localStorage.getItem("token")
+                }})
+            .then(response => {
+                // Check if the response status code indicates success (e.g., 200 OK)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+              // notify use that case has been reported
+                // alert(data.message);
+                if (data.message == "invalid_token"){
+                    localStorage.removeItem("token")
+                    window.location.href = "/"
+                }else if(data.message == "valid_token"){
+                  window.location.href = "/home"
+                }
+            })
+            .catch(error => {
+                // logs err message if any
+                console.log('Fetch error:', error);
+            });
+    }else{
+        localStorage.removeItem("token")
+    }
+
+    const loginbtn = document.querySelector("#loginBtn")
+    loginbtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        // alert("button clicked");
+        const phone = document.querySelector("#phone").value;
+        const passwd = document.querySelector("#password").value;
+        const headers = {
+            "Content-Type":"application/json",
+        }
+        const userType = document.querySelector("#userSelect").value
+        fetch("http://localhost:8000/login/",{
+            method:"POST",
+            body:JSON.stringify({phone,passwd,userType}),
+            headers:headers
+        }).then(response=>response.json())
+        .then(data=>{
+            console.log(data)
+            if (data.message == "login_success"){
+                localStorage.setItem("token",data.data.token)
+                localStorage.setItem("phone",data.data.phone)
+                localStorage.setItem("name",data.data.name)
+                localStorage.setItem("userType",data.data.userType)
+                window.location.href = "/home"
+            }else{
+                alert(data.message)
+            }
+        })
+        .catch(err=>console.log(err))
+    })
+    
+    const logoutbtn = document.querySelector("#logoutHiddenToggle")
+    logoutbtn.classList.add("visually-hidden")
+    const navz = document.querySelector("#navbar")
+    navz.style.display = "none"
+    
+ 
 </script>
 {% endblock body %}
 
