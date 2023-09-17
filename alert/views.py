@@ -4,6 +4,8 @@ from .models import User,Report,OrgUser
 from django.views.decorators.csrf import csrf_exempt
 import json
 import jwt
+from django.db.models import Q
+from django.core import serializers
 
 
 JWT_SECTET = "secret"
@@ -112,4 +114,14 @@ def pendingcase(request):
 
 @csrf_exempt
 def fetchpendingcase(request):
-    pass
+    if request.method =="POST":
+        jsondata = json.loads(request.body)
+        if jsondata['userType'] == "police":
+            reports = Report.objects.exclude(status="resolved")
+        else:
+            reports = Report.objects.filter(
+            ~Q(status="resolved") & Q(orgType="ems")
+            )
+        data = serializers.serialize("json", reports)
+        return JsonResponse({"message":"ok","data":data})
+        
