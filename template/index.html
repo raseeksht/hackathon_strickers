@@ -9,7 +9,7 @@
 {% endblock style %}
 
 {% block body %}
-    <h1 class="text-center my-5 heading">Emergency Management System</h1>
+    <h1 class="text-center my-5 heading">Alerting & Emergency Reporting System</h1>
     <div class="container">
       <form class="forms" action="/home/" method="post">
         <h1>Login</h1>
@@ -83,7 +83,7 @@
             "Content-Type":"application/json",
         }
         const userType = document.querySelector("#userSelect").value
-        fetch("http://localhost:8000/login/",{
+        fetch("/login/",{
             method:"POST",
             body:JSON.stringify({phone,passwd,userType}),
             headers:headers

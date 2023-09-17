@@ -3,7 +3,7 @@
 {% block body %}
 <h1 class="text-center underline">Pending Cases</h1>
 <div class="container" style="min-height: 70vh;">
-    <table class="table table-striped">
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <td>sn</td>
@@ -31,7 +31,7 @@
 // fetch data from /fetchpendingcase endpoint and process data and 
 async function fetchDataAndProcess() {
   try {
-    const response = await fetch('http://localhost:8000/fetchpendingcase/', {
+    const response = await fetch('/fetchpendingcase/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ fetchDataAndProcess();
 
 function sendAcknowledgement(pk){
     const name = localStorage.getItem("name")
-    fetch(`http://localhost:8000/acknowledge/?ack=${pk}&name=${name}`,{
+    fetch(`/acknowledge/?ack=${pk}&name=${name}`,{
     }).then(response=>response.json())
     .then(data=>{
         if (data.message == "acknowledge_okay"){
@@ -85,7 +85,7 @@ function sendAcknowledgement(pk){
 }
 
 function resolvecase(pk){
-    fetch(`http://localhost:8000/resolve/?ack=${pk}`,{
+    fetch(`/resolve/?ack=${pk}`,{
     }).then(response=>response.json())
     .then(data=>{
         if (data.message == "resolve_okay"){

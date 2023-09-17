@@ -64,7 +64,7 @@ button {
 
    .forms {
     width: 300px;
-    height: 700px!important;
+    height: 500px!important;
   }
 }
 
@@ -74,7 +74,8 @@ button {
   }
 
    .forms {
-    width: 450px;
+    width: auto;
+    /* background-color: red!important; */
   }
 }
 
@@ -85,6 +86,6 @@ button {
 
    .forms {
     width: 540px;
-    height: 780px;
+    height: 580px;
   }
 }

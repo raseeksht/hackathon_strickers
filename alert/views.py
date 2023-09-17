@@ -7,6 +7,7 @@ import jwt
 from django.db.models import Q
 from django.core import serializers
 from django.shortcuts import get_object_or_404
+from .message import message
 
 
 JWT_SECTET = "secret"
@@ -70,9 +71,11 @@ def report(request):
         print(jsondata)
         newrecord = Report(reportType=jsondata['reportType'],Desc=jsondata['medDesc'],Type=jsondata['medType'],latitude=jsondata['location']['latitude'],longitude=jsondata['location']['longitude'],reportedBy=jsondata['reportedBy'])
         newrecord.save()
+        message(jsondata['location']['latitude'],jsondata['location']['longitude'],alert=jsondata['reportType'],desc=jsondata['medDesc'])
         
     
         return JsonResponse({"message":"Case Reported"})
+
     
 
 def checkToken(request):
@@ -114,7 +117,7 @@ def register(request):
         newuser.save()
         jwt_encoded = jwt.encode({"phone": jsondata['phone']}, JWT_SECTET, algorithm="HS256")
 
-        payload = {"token":jwt_encoded,"name":jsondata['name'],"phone":jsondata['phone'],"userType":jsondata['orgType']}
+        payload = {"token":jwt_encoded,"name":jsondata['name'],"phone":jsondata['phone'],"userType":jsondata['userType']}
         return JsonResponse({"message":"register_success","data":payload})
     else:
         return HttpResponse("Method not allowed")

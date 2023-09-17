@@ -22,3 +22,11 @@ body{
 }
 
 
+ul li a{
+    text-decoration: none!important;
+    color: #000;
+}
+
+.active{
+    font-weight: bold;
+}

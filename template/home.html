@@ -48,7 +48,9 @@
             <div class="row my-5">
                 <div class="col-sm-6 mb-3 mb-sm-0" style="padding-bottom: 3px;">
                   <div class="card">
+                    <a href="/services" id="s1">
                     <img src="https://www.lifeems.com/wp-content/uploads/2021/08/compassionate-care-and-comprehensive-training.png" width="auto"  height="400px" class="card-img-top img-fluid" alt="...">
+                    </a>
                     <div class="card-body">
                       <h5 class="card-title heading">EMS services</h5>
                       <p class="card-text">A life-saving tool that offers immediate aid to people in need is an emergency medical alert system. When a user presses a button, it connects them to emergency responders who can send help or alert respected authorityin the event of an accident or medical emergency.</p>
@@ -56,10 +58,14 @@
                     </div>
                   </div>
                 </div>
+                
                 <div class="col-sm-6">
+                    
                   <div class="card">
                     {% load static %}
+                    <a href="/services" id="s2">
                     <img src="{% static 'images/crimereport.png' %}" width="auto" height="400px" class="card-img-top img-fluid" alt="...">
+                  </a>
 
                     <div class="card-body">
                       <h5 class="card-title heading">Crime Reporting</h5>
@@ -67,6 +73,7 @@
                       <!-- <a href="#" class="btn btn-primary">Report Crime</a> -->
                     </div>
                   </div>
+                  
                 </div>
               </div>
         </div>
@@ -77,7 +84,11 @@
 <!-- {% endblock %} -->
 <script>
     
+if (localStorage.getItem("userType") != "normal"){
+    document.querySelector("#s1").style.pointerEvents = "none"
+    document.querySelector("#s2").style.pointerEvents = "none"
 
+}
 
 
 

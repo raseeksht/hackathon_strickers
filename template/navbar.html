@@ -9,10 +9,10 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
+          <li class="nav-item" id="forHome">
             <a class="nav-link active" aria-current="page" href="/home">Home</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" id="forServices">
             <a class="nav-link" href="/services">Services</a>
           </li>
           <li class="nav-item visually-hidden" id="pendingcases">
@@ -22,8 +22,8 @@
         
         </ul>
         <ul class="navbar-nav ml-auto" id="logoutHiddenToggle">
-          <li class="nav-item">
-            <span id="username"></span>
+          <li class="nav-item my-2">
+            <span id="username" class="fw-bold"></span>
           </li>
           <li class="nav-item">
             <button class="btn btn-primary" onclick="logout()">Logout</Button>
@@ -42,11 +42,18 @@
     function forServiceProvider(){
       if (localStorage.getItem('userType') && localStorage.getItem('userType')!="normal" ){
         var pendingCasesElement = document.querySelector("#pendingcases");
+        const servicetoggle = document.querySelector("#forServices");
+
+        servicetoggle.classList.add("visually-hidden");
         pendingCasesElement.classList.remove("visually-hidden");
       }
     }
     const usrname = document.querySelector("#username")
-    usrname.innerHTML=localStorage.getItem("name")
+    usrname.innerHTML=`( ${localStorage.getItem("name")} ) `
+
+    
+    // const servicetoggle = document.querySelector("#forservices")
+    // usrname.innerHTML=`( ${localStorage.getItem("name")} ) `
 
     forServiceProvider()
   </script>

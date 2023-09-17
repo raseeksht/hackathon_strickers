@@ -60,7 +60,8 @@
           </div>
         </div>
         <h1 class="heading text-center">Your Request</h1>
-        <table class="table table-striped">
+        <span id="refreshin"></span>
+        <table class="table table-striped table-hover">
           <thead>
               <tr>
                   <td>sn</td>
@@ -73,10 +74,10 @@
           </tbody>
       </table>
       </div>
-
+      {% include './footer.html' %}
       <script>
         if (localStorage.getItem("token")){
-        fetch('http://localhost:8000/checktoken',{
+        fetch('/checktoken',{
                 headers: {
                     'Content-Type': 'application/json',
                     "Authorization":localStorage.getItem("token")
@@ -128,7 +129,7 @@
             medDesc = document.querySelector("#medicalEmergencyDesc").value
             // alert(localStorage.getItem('phone'))
             // execute when the button is clicked
-            fetch('http://localhost:8000/report/',{
+            fetch('/report/',{
                 method: 'POST',
                 body:JSON.stringify({
                   reportType:"medical",
@@ -163,7 +164,7 @@
             medDesc = document.querySelector("#crimeEmergencyDesc").value
 
             // Your code to execute when the button is clicked
-            fetch('http://localhost:8000/report/',{
+            fetch('/report/',{
                 method: 'POST',
                 body:JSON.stringify({reportType:"crime", medType: medType,medDesc:medDesc,location:{latitude,longitude} ,reportedBy:localStorage.getItem('phone')}),
                 headers: {
@@ -189,7 +190,7 @@
 
         async function fetchDataAndProcess() {
   try {
-    const response = await fetch('http://localhost:8000/fetchpendingcase/', {
+    const response = await fetch('/fetchpendingcase/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -207,6 +208,7 @@
     const requiredData = JSON.parse(data.data);
 
     const tbody = document.querySelector("tbody");
+    tbody.innerHTML = ""
 
     for (const key in requiredData) {
       if (requiredData.hasOwnProperty(key)) {
@@ -226,6 +228,12 @@
 }
 
 fetchDataAndProcess()
+setInterval(() => {
+  fetchDataAndProcess()
+}, 5000);
+
+const active = document.querySelector("")
+
 
       </script>
 
