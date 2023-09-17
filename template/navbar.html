@@ -3,7 +3,7 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navbar">
     <div class="container-fluid">
       {% load static %}
-      <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' class="img-fluid w-2" %}"></a>
+      <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' %}" style="height: 50px;"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -22,6 +22,9 @@
         
         </ul>
         <ul class="navbar-nav ml-auto" id="logoutHiddenToggle">
+          <li class="nav-item">
+            <span id="username"></span>
+          </li>
           <li class="nav-item">
             <button class="btn btn-primary" onclick="logout()">Logout</Button>
           </li>
@@ -42,10 +45,8 @@
         pendingCasesElement.classList.remove("visually-hidden");
       }
     }
-    // if (window.location.href !="/"|| window.location.href!=""){
-    //   const logoutbtn = document.querySelector("#logoutHiddenToggle")
-    //   logout.classList.remove("visually-hidden")
-    // }
+    const usrname = document.querySelector("#username")
+    usrname.innerHTML=localStorage.getItem("name")
 
     forServiceProvider()
   </script>
