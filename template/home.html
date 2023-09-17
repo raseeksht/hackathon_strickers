@@ -3,7 +3,73 @@
 {% block title %} Home - Alert Management System {% endblock title%}
 
 {% block body %}
-<h1>at home</h1>
+
+<!-- <div class="container p-2"></div>
+        <section class="bg-dark text-light p-5 p-lg-0 text-sm-start">
+            <div class="container">
+                <div class="d-sm-flex align-items-center justify-content-between">
+                    <div>
+                        <h1>EMS services</h1>
+                        <p class="lead my-4"><span class="text-warning"> services for required patients</span></p>
+                        <button class="btn btn-danger btn-lg"
+                                data-bs-toggle="modal"
+                                data-bs-target="#enroll"
+                                id="Button1"
+                        
+                            >   Services
+                        </button>
+
+                    </div>
+                    <img class="img-fluid w-50 d-none d-sm-block" src="images/download.jpg" alt="" />
+                </div>
+            </div>
+        </section>
+        <div class="container p-2"></div>
+
+        <section class="bg-dark text-light p-5 p-lg-0 text-sm-start">
+            <div class="container">
+                <div class="d-sm-flex align-items-center justify-content-between">
+                    <div>
+                        <h1>Crime Reporting</h1>
+                        <p class="lead my-4"><span class="text-warning">Report crime on spot </span></p>
+                        <button class="btn btn-danger btn-lg"
+                                data-bs-toggle="modal"
+                                data-bs-target="#enroll"
+                        
+                            >   Services
+                        </button>
+                    </div>
+                    <img class="img-fluid w-50 d-none d-sm-block" src="images/download.jpg" alt="" />
+                </div>
+            </div>
+        </section> -->
+
+        <div class="container">
+            <div class="row my-5">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <div class="card">
+                    <img src="https://www.lifeems.com/wp-content/uploads/2021/08/compassionate-care-and-comprehensive-training.png" width="auto"  height="400px" class="card-img-top img-fluid" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">EMS services</h5>
+                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card">
+                    {% load static %}
+                    <img src="{% static 'images/crimereport.png' %}" width="auto" height="400px" class="card-img-top img-fluid" alt="...">
+
+                    <div class="card-body">
+                      <h5 class="card-title">Crime Reporting</h5>
+                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
 
 <!-- {% block footer%} -->
 {% include  './footer.html' %}

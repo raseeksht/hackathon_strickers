@@ -31,8 +31,17 @@ def login(request):
             jwt_encoded = jwt.encode({"phone": jsonbody['phone']}, JWT_SECTET, algorithm="HS256")
             print(jwt_encoded)
         # return HttpResponse("ok")
+            # const usertype = (jsonbody['userType'] == "normal") ? res[0].type : res[0].orgType
+            
+            if jsonbody['userType'] == "normal":
+                usr = res[0].type
+            else:
+                usr = res[0].orgType
 
-            response = {"token":jwt_encoded,"name":res[0].name,"phone":jsonbody['phone'],"userType":res[0].orgType}
+            response = {"token":jwt_encoded,
+                        "name":res[0].name,
+                        "phone":jsonbody['phone'],
+                        "userType":usr}
             return JsonResponse({"message":"login_success","data":response})
         else:
             return JsonResponse({"message":"invalid credential"})
@@ -123,7 +132,6 @@ def fetchpendingcase(request):
             reports = Report.objects.exclude(status="resolved")
         elif jsondata['userType']=="normal":
             reports = Report.objects.filter(
-                
                 reportedBy=jsondata['phone']
             )
         else:

@@ -10,3 +10,14 @@ body{
 
 }
 
+
+.card{
+    box-shadow: 8px 8px 5px #c2c2c2!important;
+    transition: 0.2s ;
+}
+
+.card:hover{
+    box-shadow: 10px 10px 10px 10px #5a5757f2!important;
+}
+
+
