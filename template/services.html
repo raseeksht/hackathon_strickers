@@ -59,6 +59,19 @@
             </div>
           </div>
         </div>
+        <h1 class="heading text-center">Your Request</h1>
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                  <td>sn</td>
+                  <td>reportType</td>
+                  <td>Description</td>
+                  <td>Status</td>
+              </tr>
+          </thead>
+          <tbody>
+          </tbody>
+      </table>
       </div>
 
       <script>
@@ -173,7 +186,46 @@
                 console.error('Fetch error:', error);
             });
         });
-       
+
+        async function fetchDataAndProcess() {
+  try {
+    const response = await fetch('http://localhost:8000/fetchpendingcase/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"userType": localStorage.getItem('userType'),
+                            "phone":localStorage.getItem("phone")    
+    }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    const requiredData = JSON.parse(data.data);
+
+    const tbody = document.querySelector("tbody");
+
+    for (const key in requiredData) {
+      if (requiredData.hasOwnProperty(key)) {
+        const value = requiredData[key];
+        const statusClass = value.fields.status.startsWith('Acknowledged') ? 'fa-xmark' : '';
+        tbody.insertAdjacentHTML("beforeend", `<tr>
+          <td>${Number(key) + 1}</td>
+          <td>${value.fields.reportType}</td>
+          <td>${value.fields.Desc}</td>
+          <td>${value.fields.status}</td>
+        </tr>`);
+      }
+    }
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+}
+
+fetchDataAndProcess()
 
       </script>
 

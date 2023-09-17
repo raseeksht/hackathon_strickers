@@ -32,7 +32,7 @@ def login(request):
             print(jwt_encoded)
         # return HttpResponse("ok")
 
-            response = {"token":jwt_encoded,"name":res[0].name,"phone":jsonbody['phone'],"userType":res[0].type}
+            response = {"token":jwt_encoded,"name":res[0].name,"phone":jsonbody['phone'],"userType":res[0].orgType}
             return JsonResponse({"message":"login_success","data":response})
         else:
             return JsonResponse({"message":"invalid credential"})
@@ -105,7 +105,7 @@ def register(request):
         newuser.save()
         jwt_encoded = jwt.encode({"phone": jsondata['phone']}, JWT_SECTET, algorithm="HS256")
 
-        payload = {"token":jwt_encoded,"name":jsondata['name'],"phone":jsondata['phone'],"userType":jsondata['userType']}
+        payload = {"token":jwt_encoded,"name":jsondata['name'],"phone":jsondata['phone'],"userType":jsondata['orgType']}
         return JsonResponse({"message":"register_success","data":payload})
     else:
         return HttpResponse("Method not allowed")
@@ -121,6 +121,11 @@ def fetchpendingcase(request):
         print(jsondata)
         if jsondata['userType'] == "police":
             reports = Report.objects.exclude(status="resolved")
+        elif jsondata['userType']=="normal":
+            reports = Report.objects.filter(
+                
+                reportedBy=jsondata['phone']
+            )
         else:
             reports = Report.objects.filter(
             ~Q(status="resolved") & Q(reportType="medical")
