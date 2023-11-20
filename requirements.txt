@@ -2,3 +2,4 @@ Django==4.2.7
 PyJWT==2.8.0
 Requests==2.31.0
 twilio==8.10.2
+psycopg2==2.9.9
